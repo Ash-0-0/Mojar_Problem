@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojar Problem</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Basic styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: #333;
+            color: #f8f8f8;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-top: 30px;
+            font-size: 40px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 600;
+        }
+
+        body.dark-mode h1 {
+            color: #007bff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .problem-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .problem-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #ffffff;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            gap: 20px;
+        }
+
+        body.dark-mode .problem-item {
+            background-color: #444;
+            border-color: #555;
+        }
+
+        /* Hover effect for problem items */
+        .problem-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border-color: #007bff;
+        }
+
+        /* Hover effect for numbering card */
+        .numbering-card:hover {
+            background-color: #005fa1;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Numbering Card */
+        .numbering-card {
+            width: 40px;
+            height: 40px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* Difficulty Colors */
+        .difficulty.easy {
+            color: #4CAF50; /* Green */
+        }
+
+        .difficulty.medium {
+            color: #ff9800; /* Orange */
+        }
+
+        .difficulty.hard {
+            color: #f44336; /* Red */
+        }
+
+        .difficulty.expert {
+            color: #b71c1c; /* Dark Red */
+        }
+
+        /* Difficulty Colors in Dark Mode */
+        body.dark-mode .difficulty.easy {
+            color: #81C784; /* Lighter Green for dark mode */
+        }
+
+        body.dark-mode .difficulty.medium {
+            color: #FFB74D; /* Lighter Orange for dark mode */
+        }
+
+        body.dark-mode .difficulty.hard {
+            color: #EF5350; /* Lighter Red for dark mode */
+        }
+
+        body.dark-mode .difficulty.expert {
+            color: #D32F2F; /* Lighter Dark Red for dark mode */
+        }
+
+        /* Dark Mode Button */
+        .toggle-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-button:hover {
+            background-color: #005fa1;
+        }
+
+        /* Problem title styling */
+        .problem-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .problem-item h3 {
+            font-size: 30px;
+            color: inherit;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Problem description styling */
+        .problem-item p {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: inherit;
+            font-weight: 500;
+            display: flex;
+        }
+
+        body.dark-mode .problem-item p {
+            color: #f8f8f8;
+        }
+
+        /* Hover effect for problem items in dark mode */
+body.dark-mode .problem-item:hover {
+     transform: translateY(-10px);
+     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+     border-color: #007bff;
+ }
+
+        /* Buttons for links at the top-left corner */
+        .top-buttons {
+          position: fixed;
+          top: 20px;
+          left: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+      }
+
+      .top-buttons a {
+          background-color: #007bff;
+          color: white;
+          padding: 10px;
+          border-radius: 50%;
+          text-align: center;
+          font-size: 20px;
+          transition: background-color 0.3s ease;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .top-buttons a:hover {
+          background-color: #005fa1;
+      }
+
+    </style>
+</head>
+<body>
+    <h1>Mojar Problem</h1>
+    <div class="container">
+        <ul class="problem-list" id="problemList"></ul>
+    </div>
+
+    <!-- Dark Mode Toggle Button -->
+    <div class="toggle-button" onclick="toggleDarkMode()">
+        <i class="fas fa-moon" id="dark-mode-icon"></i>
+    </div>
+
+    <!-- Top Left Buttons -->
+    <div class="top-buttons">
+     <a href="https://ash-0-0.github.io/Code_Red_Tracker/" target="_blank">
+         <i class="fas fa-trophy"></i>
+     </a>
+     <a href="https://ash-0-0.github.io/CF_Extensions/" target="_blank">
+         <i class="fas fa-plug"></i>
+     </a>
+ </div>
+
+    <script>
+        const problems = [
+        {
+          name: "Cover in Water (A)",
+          url: "https://codeforces.com/problemset/problem/1900/A",
+          icon: "fas fa-droplet",
+          difficulty: "Easy"
+      },
+      {
+          name: "Beautiful Year (A)",
+          url: "https://codeforces.com/problemset/problem/271/A",
+          icon: "fas fa-calendar-alt",
+          difficulty: "Easy"
+      },
+      {
+          name: "Lever (A)",
+          url: "https://codeforces.com/problemset/problem/376/A",
+          icon: "fas fa-balance-scale-right",
+          difficulty: "Easy"
+      },
+      {
+          name: "Buttons (B)",
+          url: "https://codeforces.com/contest/268/problem/B",
+          icon: "fas fa-play",
+          difficulty: "Easy"
+      },
+      {
+          name: "Chips Moving (A)",
+          url: "https://codeforces.com/contest/1213/problem/A",
+          icon: "fas fa-coins",
+          difficulty: "Easy"
+      },
+      {
+          name: "Life Without Zeros (A)",
+          url: "https://codeforces.com/problemset/problem/75/A",
+          icon: "fas fa-circle",
+          difficulty: "Easy"
+      },
+      {
+          name: "Even Odds (A)",
+          url: "https://codeforces.com/problemset/problem/318/A",
+          icon: "fas fa-adjust",
+          difficulty: "Easy"
+      },
+      {
+          name: "Registration system (C)",
+          url: "https://codeforces.com/problemset/problem/4/C?locale=en",
+          icon: "fas fa-address-book",
+          difficulty: "Easy"
+      },
+      {
+          name: "Dragons (A)",
+          url: "https://codeforces.com/problemset/problem/230/A",
+          icon: "fas fa-dragon",
+          difficulty: "Easy"
+      },
+      {
+          name: "Domino (A)",
+          url: "https://codeforces.com/problemset/problem/353/A",
+          icon: "fas fa-dice",
+          difficulty: "Easy"
+      },
+      {
+          name: "Forked (A)",
+          url: "https://codeforces.com/problemset/problem/1904/A",
+          icon: "fas fa-chess-knight",
+          difficulty: "Easy"
+      },
+      {
+          name: "Cards (A)",
+          url: "https://codeforces.com/problemset/problem/701/A",
+          icon: "fas fa-diamond",
+          difficulty: "Easy"
+      },
+      {
+          name: "Two Friends (A)",
+          url: "https://codeforces.com/problemset/problem/1969/A",
+          icon: "fas fa-handshake",
+          difficulty: "Easy"
+      },
+      {
+          name: "Cypher (C)",
+          url: "https://codeforces.com/contest/1703/problem/C",
+          icon: "fas fa-lock",
+          difficulty: "Easy"
+      },
+      {
+          name: "Showering (C)",
+          url: "https://codeforces.com/contest/1999/problem/C",
+          icon: "fas fa-shower",
+          difficulty: "Easy"
+      },
+      {
+          name: "cAPS lOCK (A)",
+          url: "https://codeforces.com/contest/131/problem/A",
+          icon: "fas fa-keyboard",
+          difficulty: "Easy"
+      },
+      {
+          name: "Alex and broken contest (A)",
+          url: "https://codeforces.com/problemset/problem/877/A",
+          icon: "fas fa-flag-checkered",
+          difficulty: "Easy"
+      },
+      {
+          name: "Cakeminator (A)",
+          url: "https://codeforces.com/problemset/problem/330/A",
+          icon: "fas fa-cake",
+          difficulty: "Medium"
+      },
+      {
+         name: "Combination Lock (A)",
+         url: "https://codeforces.com/problemset/problem/540/A",
+         icon: "fas fa-lock",
+         difficulty: "Medium"
+     },
+     {
+         name: "Xenia and Ringroad (B)",
+         url: "https://codeforces.com/problemset/problem/339/B",
+         icon: "fas fa-road",
+         difficulty: "Medium"
+     },
+     {
+         name: "Dictionary (B)",
+         url: "https://codeforces.com/problemset/problem/1674/B",
+         icon: "fas fa-book",
+         difficulty: "Medium"
+     },
+     {
+         name: "Target Practice (C)",
+         url: "https://codeforces.com/problemset/problem/1873/C",
+         icon: "fas fa-bullseye",
+         difficulty: "Medium"
+     },
+     {
+         name: "Raising Bacteria (A)",
+         url: "https://codeforces.com/problemset/problem/579/A",
+         icon: "fas fa-microscope",
+         difficulty: "Medium"
+     },
+     {
+         name: "Worms (B)",
+         url: "https://codeforces.com/problemset/problem/474/B",
+         icon: "fas fa-virus",
+         difficulty: "Medium"
+     },
+     {
+         name: "Winner (A)",
+         url: "https://codeforces.com/problemset/problem/2/A",
+         icon: "fas fa-trophy",
+         difficulty: "Medium"
+     },
+     {
+         name: "Perfect Square (C)",
+         url: "https://codeforces.com/problemset/problem/1881/C",
+         icon: "fas fa-th",
+         difficulty: "Medium"
+     },
+     {
+          name: "Box Packing (C)",
+          url: "https://codeforces.com/problemset/problem/903/C",
+          icon: "fas fa-box",
+          difficulty: "Medium"
+      },
+      {
+          name: "The Monster (A)",
+          url: "https://codeforces.com/problemset/problem/787/A",
+          icon: "fas fa-ghost",
+          difficulty: "Medium"
+      },
+      {
+          name: "Chess (B)",
+          url: "https://codeforces.com/problemset/problem/38/B",
+          icon: "fas fa-chess",
+          difficulty: "Medium"
+      },
+      {
+          name: "Boats Competition (C)",
+          url: "https://codeforces.com/problemset/problem/1399/C",
+          icon: "fas fa-sailboat",
+          difficulty: "Medium"
+      },
+      {
+          name: "Rank List (A)",
+          url: "https://codeforces.com/problemset/problem/166/A",
+          icon: "fas fa-th-list",
+          difficulty: "Medium"
+      },
+      {
+          name: "Sereja and Suffixes (B)",
+          url: "https://codeforces.com/problemset/problem/368/B",
+          icon: "fas fa-arrow-right",
+          difficulty: "Medium"
+      },
+      {
+          name: "Filling Shapes (A)",
+          url: "https://codeforces.com/problemset/problem/1182/A",
+          icon: "fas fa-th",
+          difficulty: "Medium"
+      },
+      {
+          name: "Binary Cut (D)",
+          url: "https://codeforces.com/contest/1971/problem/D",
+          icon: "fas fa-stripe",
+          difficulty: "Medium"
+      },
+      {
+          name: "Same Parity Summands (B)",
+          url: "https://codeforces.com/contest/1352/problem/B",
+          icon: "fas fa-balance-scale",
+          difficulty: "Medium"
+      },
+      {
+          name: "Taxi (B)",
+          url: "https://codeforces.com/contest/158/problem/B",
+          icon: "fas fa-car",
+          difficulty: "Medium"
+      },
+      {
+          name: "K-th Not Divisible by n (C)",
+          url: "https://codeforces.com/contest/1352/problem/C",
+          icon: "fas fa-divide",
+          difficulty: "Medium"
+      },
+      {
+          name: "Move Brackets (C)",
+          url: "https://codeforces.com/contest/1374/problem/C",
+          icon: "fas fa-chain",
+          difficulty: "Medium"
+      },
+      {
+          name: "Flipping Game (A)",
+          url: "https://codeforces.com/contest/327/problem/A",
+          icon: "fas fa-refresh",
+          difficulty: "Medium"
+      },
+      {
+          name: "Cut Ribbon (A)",
+          url: "https://codeforces.com/contest/189/problem/A",
+          icon: "fas fa-cut",
+          difficulty: "Medium"
+      },
+      {
+          name: "Fence (B)",
+          url: "https://codeforces.com/contest/363/problem/B",
+          icon: "fas fa-ruler-horizontal",
+          difficulty: "Medium"
+      },
+      {
+          name: "T-primes (B)",
+          url: "https://codeforces.com/problemset/problem/230/B",
+          icon: "fas fa-t",
+          difficulty: "Hard"
+      },
+      {
+          name: "Password (B)",
+          url: "https://codeforces.com/problemset/problem/126/B",
+          icon: "fas fa-key",
+          difficulty: "Hard"
+      },
+      {
+          name: "Maximum Value (B)",
+          url: "https://codeforces.com/problemset/problem/484/B",
+          icon: "fas fa-chart-line",
+          difficulty: "Hard"
+      },
+      {
+          name: "Design Tutorial: Learn from Life (B)",
+          url: "https://codeforces.com/problemset/problem/472/B",
+          icon: "fas fa-arrows-alt-v",
+          difficulty: "Hard"
+      },
+      {
+          name: "Inhabitant of the Deep Sea (C)",
+          url: "Link",
+          icon: "fas fa-anchor",
+          difficulty: "Hard"
+      },
+      {
+          name: "Two Buttons (B)",
+          url: "https://codeforces.com/contest/520/problem/B",
+          icon: "fas fa-gamepad",
+          difficulty: "Hard"
+      },
+      {
+          name: "Random Teams (B)",
+          url: "https://codeforces.com/contest/478/problem/B",
+          icon: "fas fa-users",
+          difficulty: "Hard"
+      },
+      {
+          name: "Odd Selection (A)",
+          url: "https://codeforces.com/contest/1363/problem/A",
+          icon: "fas fa-check-square",
+          difficulty: "Hard"
+      },
+      {
+          name: "Anya and 1100 (C)",
+          url: "https://codeforces.com/contest/2036/problem/C",
+          icon: "fas fa-window-maximize",
+          difficulty: "Hard"
+      }
+        ];
+
+        // Function to render problem cards dynamically
+        function renderProblems() {
+            const problemList = document.getElementById("problemList");
+            problems.forEach((problem, index) => {
+                const listItem = document.createElement("li");
+                listItem.classList.add("problem-item");
+
+                // Create the card content
+                listItem.innerHTML = `
+                    <div class="numbering-card">${index + 1}</div>
+                    <a href="${problem.url}" target="_blank">
+                        <h3><i class="${problem.icon}"></i>${problem.name}</h3>
+                        <p class="difficulty ${problem.difficulty.toLowerCase()}">Difficulty: ${problem.difficulty}</p>
+                    </a>
+                `;
+
+                problemList.appendChild(listItem);
+            });
+        }
+
+        // Call the render function to display the problems
+        renderProblems();
+
+        // Function to toggle dark mode
+        function toggleDarkMode() {
+            const body = document.body;
+            const icon = document.getElementById('dark-mode-icon');
+
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
+    </script>
+</body>
+</html>
