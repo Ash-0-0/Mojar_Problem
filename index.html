@@ -73,12 +73,6 @@
             border-color: #007bff;
         }
 
-        /* Hover effect for numbering card */
-        .numbering-card:hover {
-            background-color: #005fa1;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-
         /* Numbering Card */
         .numbering-card {
             width: 40px;
@@ -99,35 +93,26 @@
         /* Difficulty Colors */
         .difficulty.easy {
             color: #4CAF50; /* Green */
+            font-weight: bold;
+            font-size: 25px;
         }
 
         .difficulty.medium {
             color: #ff9800; /* Orange */
+            font-weight: bold;
+            font-size: 25px;
         }
 
         .difficulty.hard {
             color: #f44336; /* Red */
+            font-weight: bold;
+            font-size: 25px;
         }
 
         .difficulty.expert {
             color: #b71c1c; /* Dark Red */
-        }
-
-        /* Difficulty Colors in Dark Mode */
-        body.dark-mode .difficulty.easy {
-            color: #81C784; /* Lighter Green for dark mode */
-        }
-
-        body.dark-mode .difficulty.medium {
-            color: #FFB74D; /* Lighter Orange for dark mode */
-        }
-
-        body.dark-mode .difficulty.hard {
-            color: #EF5350; /* Lighter Red for dark mode */
-        }
-
-        body.dark-mode .difficulty.expert {
-            color: #D32F2F; /* Lighter Dark Red for dark mode */
+            font-weight: bold;
+            font-size: 25px;
         }
 
         /* Dark Mode Button */
@@ -176,43 +161,54 @@
             color: #f8f8f8;
         }
 
-        /* Hover effect for problem items in dark mode */
-body.dark-mode .problem-item:hover {
-     transform: translateY(-10px);
-     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-     border-color: #007bff;
- }
-
         /* Buttons for links at the top-left corner */
         .top-buttons {
-          position: fixed;
-          top: 20px;
-          left: 20px;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-      }
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-      .top-buttons a {
-          background-color: #007bff;
-          color: white;
-          padding: 10px;
-          border-radius: 50%;
-          text-align: center;
-          font-size: 20px;
-          transition: background-color 0.3s ease;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      }
+        .top-buttons a {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 20px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
 
-      .top-buttons a:hover {
-          background-color: #005fa1;
-      }
+        .top-buttons a:hover {
+            background-color: #005fa1;
+        }
 
+        /* Difficulty filter dropdown */
+        .difficulty-filter {
+            margin-bottom: 20px;
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 5px;
+            width: 200px;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
     <h1>Mojar Problem</h1>
     <div class="container">
+        <!-- Filter Dropdown -->
+        <select id="difficultyFilter" class="difficulty-filter" onchange="filterByDifficulty()">
+            <option value="All">Filter by Difficulty</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+            <option value="Expert">Expert</option>
+        </select>
+
         <ul class="problem-list" id="problemList"></ul>
     </div>
 
@@ -223,13 +219,16 @@ body.dark-mode .problem-item:hover {
 
     <!-- Top Left Buttons -->
     <div class="top-buttons">
-     <a href="https://ash-king-xd.github.io/Code_Red_Tracker/" target="_blank">
-         <i class="fas fa-trophy"></i>
-     </a>
-     <a href="https://ash-king-xd.github.io/CF_Extensions/" target="_blank">
-         <i class="fas fa-plug"></i>
-     </a>
- </div>
+        <a href="https://ash-king-xd.github.io/Code_Red_Tracker/" target="_blank">
+            <i class="fas fa-trophy"></i>
+        </a>
+        <a href="https://ash-king-xd.github.io/CF_Extensions/" target="_blank">
+            <i class="fas fa-plug"></i>
+        </a>
+        <a href="https://cftracker.netlify.app/problems" target="_blank">
+            <i class="fas fa-globe"></i>
+        </a>
+    </div>
 
     <script>
         const problems = [
@@ -511,7 +510,7 @@ body.dark-mode .problem-item:hover {
       },
       {
           name: "Inhabitant of the Deep Sea (C)",
-          url: "Link",
+          url: "https://codeforces.com/problemset/problem/1955/C",
           icon: "fas fa-anchor",
           difficulty: "Hard"
       },
@@ -538,44 +537,64 @@ body.dark-mode .problem-item:hover {
           url: "https://codeforces.com/contest/2036/problem/C",
           icon: "fas fa-window-maximize",
           difficulty: "Hard"
+      },
+      {
+          name: "Explore More",
+          url: "https://cftracker.netlify.app/problems",
+          icon: "fas fa-globe",
+          difficulty: "All"
       }
         ];
 
-        // Function to render problem cards dynamically
-        function renderProblems() {
-            const problemList = document.getElementById("problemList");
-            problems.forEach((problem, index) => {
-                const listItem = document.createElement("li");
-                listItem.classList.add("problem-item");
+        function renderProblems(filteredProblems) {
+            const problemList = document.getElementById('problemList');
+            problemList.innerHTML = '';  // Clear existing list
 
-                // Create the card content
-                listItem.innerHTML = `
-                    <div class="numbering-card">${index + 1}</div>
-                    <a href="${problem.url}" target="_blank">
-                        <h3><i class="${problem.icon}"></i>${problem.name}</h3>
-                        <p class="difficulty ${problem.difficulty.toLowerCase()}">Difficulty: ${problem.difficulty}</p>
-                    </a>
-                `;
+            filteredProblems.forEach((problem, index) => {
+                const problemItem = document.createElement('li');
+                problemItem.classList.add('problem-item');
 
-                problemList.appendChild(listItem);
+                // Number card
+                const numberingCard = document.createElement('div');
+                numberingCard.classList.add('numbering-card');
+                numberingCard.textContent = index + 1;
+                problemItem.appendChild(numberingCard);
+
+                // Problem title and link
+                const problemTitle = document.createElement('h3');
+                const problemLink = document.createElement('a');
+                problemLink.href = problem.url;
+                problemLink.target = "_blank";
+                problemLink.innerHTML = `<i class="fas fa-${problem.icon}"></i> ${problem.name}`;
+                problemTitle.appendChild(problemLink);
+                problemItem.appendChild(problemTitle);
+
+                // Difficulty badge
+                const difficultyBadge = document.createElement('span');
+                difficultyBadge.classList.add('difficulty', problem.difficulty.toLowerCase());
+                difficultyBadge.textContent = problem.difficulty;
+                problemItem.appendChild(difficultyBadge);
+
+                problemList.appendChild(problemItem);
             });
         }
 
-        // Call the render function to display the problems
-        renderProblems();
+        function filterByDifficulty() {
+            const selectedDifficulty = document.getElementById('difficultyFilter').value;
+            const filteredProblems = selectedDifficulty === 'All' ? problems : problems.filter(problem => problem.difficulty === selectedDifficulty);
+            renderProblems(filteredProblems);
+        }
 
-        // Function to toggle dark mode
         function toggleDarkMode() {
             const body = document.body;
             const icon = document.getElementById('dark-mode-icon');
-
             body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) {
-                icon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                icon.classList.replace('fa-sun', 'fa-moon');
-            }
+            icon.classList.toggle('fa-sun');
+            icon.classList.toggle('fa-moon');
         }
+
+        // Initial rendering of all problems
+        renderProblems(problems);
     </script>
 </body>
 </html>
